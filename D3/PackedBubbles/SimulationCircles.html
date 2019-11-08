@@ -1,0 +1,63 @@
+<! Purpose of this excercie: Learn how to use forceSimulation to draw a circle plot; tooltip>
+<html>
+<head>
+	<title>D3 Test</title>
+	<meta charset="utf-8">
+	<script src="http://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		var width = 1500
+		var height = 1500
+		
+		d3.select("body").append("svg")
+		  .attr("width", width)
+		  .attr("height", height)
+		
+		var nodes = []
+		for (i = 0; i < 100; i++) 
+		{
+		    nodes.push({radius: Math.random() * 25})
+		}
+
+		var simulation = d3.forceSimulation(nodes)
+			.force('r', d3.forceRadial(function(d, i) {return i%1 * 300+180}, width / 2, height / 2))
+			//.force('x', d3.forceY().y(function(d, i) {return i%3 * 300 + 50}))
+			//.force('charge', d3.forceManyBody().strength(5))
+			.force('center', d3.forceCenter(width / 2, height / 2))
+			.force('collision', d3.forceCollide().radius(function(d) {return d.radius}))
+			.on('tick', ticked)
+		
+		var circles = d3.select("svg")
+		  .selectAll("circle")
+		  .data(nodes)
+		  .enter()
+		  .append("circle")
+		    .attr("r", d=>d.radius)
+			
+		var scale = d3.scaleLinear().domain([0, 25]).range([0.1, 0.99])	
+		circles.attr("fill", d=>d3.interpolateRainbow(scale(d.radius)))
+		
+		circles
+   		  .append("svg:title")
+			.text(d=>d.radius)
+
+		function ticked()
+		{
+			circles
+				.attr("cx", d=>d.x)
+				.attr("cy", d=>d.y)
+		}
+
+//Reference: https://devdocs.io/d3~5/d3-force#simulation_force
+//Task 1: Remove any of the forces in simulation and observe how the display changes
+//Task 2: Change the charge force strength from 5 to -15 and observe how the display changes
+//Task 3: Add the following force to simulation and observe how the display changes: 
+//			.force('x', d3.forceX().x(function(d, i) {return i%3 * 300 + 50}))
+//Task 4: Remove the force above, and then add the following force to simulation and observe how your display changes
+//			.force('r', d3.forceRadial(function(d, i) {return i%3 * 300+100}, width / 2, height / 2))
+//Task 5: Are you able to place all the circle around a circle with a radii of 400 in the layout? 
+
+	</script>
+</body>
+</html>
